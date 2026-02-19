@@ -17,6 +17,14 @@ db/biomarkers.js
 
 
 ## Owen has explained firebase notifications in FIREBASE.md
+Push notifications can now be sent by requiring: 
+```js
+const { sendNotification } = require("../services/fcm.services");
+``` 
+Then you can send the notifcation with:
+- `token`: The FCM token of the user device
+- `title`: The title of the notification
+- `body`: The content of the notification
 
 ## Using express to handle HTTP and routing 
 
