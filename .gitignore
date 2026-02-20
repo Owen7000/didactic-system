@@ -3,3 +3,5 @@ node_modules/
 serviceAccountKey.json
 .DS_Store
 node_modules
+
+/src/generated/prisma
