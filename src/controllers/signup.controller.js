@@ -4,7 +4,7 @@ const prisma = require("../utils/prisma");
 
 
 const signupUser = async (req, res) => {
-    const { username, emailAddress, password } = req.body;
+    const { emailAddress, password } = req.body;
 
     if (!emailAddress || !password) {
         return res.status(400).json({
