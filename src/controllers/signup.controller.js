@@ -54,9 +54,12 @@ const signupUser = async (req, res) => {
         console.log("Created new user record");
 
         // Send the response
-        res.status(200).json(user)
+        res.status(200).json(user);
     } else if (!emailAddressUnique) {
         // The email address has been used
+        res.status(400).json({
+            error: "An account with that email already exists"
+        });
     }
 }
 
