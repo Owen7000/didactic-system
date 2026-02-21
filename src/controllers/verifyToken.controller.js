@@ -10,44 +10,36 @@ const verifyJwt = async (req, res) => {
         });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, async function(err, decoded) {
-        if (err) {
-            if (err.name == "TokenExpiredError") {
-                // The closest status code I could think of for this is 401
-                // Since technically the user is unauthenticed.
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-                return res.status(401).json({
-                    error: "Token expired",
-                })
+        const userExists = await prisma.user.count({
+            where: {
+                userId: decoded.userId,
+                emailAddress: decoded.emailAddress,
             }
-        } else {
-            // The JWT has not expired, but might still have wrong data
-            const userExists = await prisma.user.count({
-                where: {
-                    AND: [
-                        {
-                            userId: {
-                                equals: decoded.userId,
-                            },
-                            emailAddress: {
-                                equals: decoded.emailAddress,
-                            },
-                        }
-                    ]
-                }
+        });
+
+        if (userExists > 0) {
+            return res.status(200).json({
+                message: "Verified"
             });
-
-            if (userExists > 0) {
-                return res.status(200).json({
-                    message: "Verified",
-                });
-            } else {
-                return res.status(401).json({
-                    error: "Token expired",
-                });
-            }
+        } else {
+            return res.status(401).json({
+                error: "User not found"
+            })
         }
-    })
+    } catch (err) {
+        if (err.name == "TokenExpiredError") {
+            return res.status(401).json({
+                error: "Token expired"
+            })
+        }
+        
+        return res.status(401).json({
+            error: "Invalid token"
+        });
+    }
 }
 
 module.exports = {
