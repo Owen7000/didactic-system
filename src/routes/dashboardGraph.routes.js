@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { getGraphData } = require("../controllers/dashboardGraph.controller");
 
-router.get("/graph-data", getGraphData);
+router.post("/graph-data", getGraphData);
 
 module.exports = router;
