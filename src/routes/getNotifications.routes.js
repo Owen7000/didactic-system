@@ -3,6 +3,6 @@ const router = express.Router();
 
 const { getNotifications } = require("../controllers/getNotifications.controller");
 
-router.get("/notifications", getNotifications);
+router.post("/notifications", getNotifications);
 
 module.exports = router;
