@@ -21,7 +21,7 @@ loginBtn?.addEventListener("click",async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: email, password })
         });
-        const data = await response.json
+        const data = await response.json();
         if (!response.ok){
             loginMessage.textContent = "Unable to sign in."
             return;

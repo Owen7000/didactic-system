@@ -1,5 +1,5 @@
+const patientList = document.getElementById("patientList");
 const patientCards = document.querySelectorAll(".patient-card");
-const selectedPatientName = document.getElementById("selectedPatientName");
 const selectedPatientEmail = document.getElementById("selectedPatientEmail");
 const logoutBtn = document.getElementById("logoutBtn");
 
@@ -8,7 +8,17 @@ const patientSteps = document.getElementById("patientSteps");
 const patientBp = document.getElementById("patientBp");
 const patientCalories = document.getElementById("patientCalories");
 
+const graphTitle = document.getElementById("graphTitle");
+const graphSubtitle = document.getElementById("graphSubtitle");
+const graphRangeButtons = document.querySelectorAll(".graphRangeBtn");
+const graphCanvas = document.getElementById("clinicianBiomarkerGraph");
+
 const clinicianApiKey = localStorage.getItem("clinicianApiKey");
+
+let selectedPatientId = null;
+let selectedBiomarkerType = 0 // 0 for HR, 1 for steps, 2 bp, 3 cals
+let selectedDateFrame = "7d";
+let clinicianChart = null;
 
 if (!clinicianApiKey) {
     window.location.href = "index.html";
@@ -21,7 +31,7 @@ async function loadPatients(){
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ clinicianId })
+            body: JSON.stringify({ userApiKey: clinicianApiKey })
         });
         const data = await response.json();
         if (!response.ok){
@@ -48,32 +58,32 @@ function renderPatients(patients) {
     if (index === 0) button.classList.add("active");
 
     button.dataset.userid = patient.userId;
-    button.dataset.name = patient.name;
     button.dataset.email = patient.email;
 
     button.innerHTML = `
-      <div class="patient-card-name">${patient.name}</div>
-      <div class="patient-card-sub">${patient.summary}</div>
+      <div class="patient-card-name">${patient.name || patient.emailAddress || "Unknown Patiemnt"}</div>
+      <div class="patient-card-sub">${patient.summary || "View biomarker data"}</div>
     `;
 
     button.addEventListener("click", () => {
       document.querySelectorAll(".patient-card").forEach(c => c.classList.remove("active"));
       button.classList.add("active");
 
-      selectedPatientName.textContent = patient.name;
       selectedPatientEmail.textContent = patient.email;
 
-      // later: fetch biomarker data for this patient here
-    });
+      selectedPatientId = patient.userId;
+      loadPatientBiomarkers(patient.userId);
+      loadGraphData(patient.userId, selectedBiomarkerType, selectedDateFrame);    });
 
     patientList.appendChild(button);
   });
 
   if (patients.length > 0) {
     const first = patients[0];
-    selectedPatientName.textContent = first.name || first.emailAddress || "Unknown Patient";
-    selectedPatientEmail.textContent = first.email || first.emailAddress || "";
-    loadPatientBioMarkers(first.userId);
+    selectedPatientEmail.textContent = first.emailAddress || "Unknown Patient";
+    selectedPatientId = first.userId;
+    loadPatientBiomarkers(selectedPatientId);
+    loadGraphData(first.userId, selectedBiomarkerType, selectedDateFrame);
   }
 }
 async function loadPatientBiomarkers(userId) {
@@ -114,7 +124,159 @@ async function loadPatientBiomarkers(userId) {
         console.error(error);
     }
 }
+async function loadGraphData(patientId, type, dateFrame){
+    try {
+        console.log("Sending graph request:", {patientId, type, dateFrame});
+        const response = await fetch("http://localhost:3000/api/clinician/patient/graph", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                userApiKey: clinicianApiKey,
+                patientId,
+                type,
+                dateFrame
+            })
+        });
+        const data = await response.json();
 
+        if(!response.ok || !data.data){
+            renderEmptyChart();
+            return;
+        }
+        renderChart(type,data.data);
+    } catch (error){
+        console.error(error);
+        renderEmptyChart();
+    }
+}
+function renderChart(type, graphData){
+    const ctx = graphCanvas.getContext("2d");
+
+    if(clinicianChart) {
+        clinicianChart.destroy();
+    }
+    if(!graphData.length){
+        renderEmptyChart();
+        return;
+    }
+    if (type === 2){
+        graphTitle.textContent = "Blood Pressure Trends";
+        graphSubtitle.textContent = "Systolic and diastolic readings over time";
+
+        clinicianChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: graphData.map(item => item.label),
+                datasets: [
+                    {
+                        label: "Systolic",
+                        data: graphData.map(item => item.systolic),
+                        borderWidth: 2,
+                        tension: 0.3
+                    },
+                    {
+                        label: "Diastolic",
+                        data: graphData.map(item => item.diastolic),
+                        borderWidth: 2,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        return;
+    }
+    let label = "Heart Rate";
+    if (type === 1) label = "Steps";
+    if (type === 3) label = "Calories";
+    if (label == "Heart Rate") graphData.sort((a, b) => parseGraphLabelToDate(a.label) - parseGraphLabelToDate(b.label));
+
+    graphTitle.textContent = `${label} Trends`;
+    graphSubtitle.textContent = `Recent ${label.toLowerCase()} readings`;
+    clinicianChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: graphData.map(item => item.label),
+            datasets: [
+                {
+                    label,
+                    data: graphData.map(item => item.value),
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+function renderEmptyChart() {
+    const ctx = graphCanvas.getContext("2d");
+
+    if (clinicianChart) {
+        clinicianChart.destroy();
+    }
+
+    graphTitle.textContent = "Biomarker Trends";
+    graphSubtitle.textContent = "No graph data available";
+
+    clinicianChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: "No data",
+                    data: []
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+function parseGraphLabelToDate(label) {
+    const [datePart, timePart] = label.split(" ");
+    const [day, month, year] = datePart.split("/").map(Number);
+    const [hour, minute] = timePart.split(":").map(Number);
+
+    return new Date(year, month - 1, day, hour, minute);
+}
+document.querySelectorAll(".bioCard").forEach((card,index) => {
+    card.addEventListener("click", () => {
+        document.querySelectorAll(".bioCard").forEach(c => c.classList.remove("bioCard--active"));
+        card.classList.add("bioCard--active");
+
+        selectedBiomarkerType = index;
+
+        if(selectedPatientId){
+            loadGraphData(selectedPatientId,selectedBiomarkerType, selectedDateFrame);
+        }
+    });
+});
+graphRangeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        graphRangeButtons.forEach(btn => btn.classList.remove("graphRangeBtn--active"));
+        button.classList.add("graphRangeBtn--active");
+
+        selectedDateFrame = button.dataset.range;
+
+        console.log("Range changed to:", selectedDateFrame); // debug
+
+        if (selectedPatientId) {
+            loadGraphData(selectedPatientId, selectedBiomarkerType, selectedDateFrame);
+        }
+    });
+});
 logoutBtn?.addEventListener("click", () => {
   localStorage.removeItem("clinicianApiKey");
   localStorage.removeItem("clinicianEmail");

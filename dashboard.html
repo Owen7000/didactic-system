@@ -24,27 +24,26 @@
             <section class="panel content-panel">
                 <div class="patient-header">
                     <div>
-                        <h1 id="selectedPatientName">Example</h1>
-                        <p id="selectedPatientEmail">Example@email.com</p>
+                        <h1 id="selectedPatientEmail">Example</h1>
                     </div>
                 </div>
                 <section id="biomarkerOverview" class="web-biomarker-overview">
                     <h2 id="bioTitle">Latest Biomarkers</h2>
 
                     <div id="bioCards">
-                        <div id="bioCard bioCard--active">
+                        <div class="bioCard bioCard--active">
                             <div class="bioLabel">Heart Rate</div>
                             <div id="patientHeartRate" class="bioValue bioValue--active">-</div>
                         </div>
-                        <div id="bioCard bioCard">
+                        <div class="bioCard">
                             <div class="bioLabel">Steps</div>
                             <div id="patientSteps" class="bioValue">-</div>
                         </div>
-                        <div id="bioCard bioCard">
+                        <div class="bioCard">
                             <div class="bioLabel">Blood Pressure</div>
                             <div id="patientBp" class="bioValue">-</div>
                         </div>
-                        <div id="bioCard bioCard">
+                        <div class="bioCard">
                             <div class="bioLabel">Calories</div>
                             <div id="patientCalories" class="bioValue">-</div>
                         </div>
@@ -54,17 +53,21 @@
                     <div id="graphTop">
                         <div>
                             <h2 id="graphTitle">Biomarker Trends</h2>
+                            <p id="graphSubtitle">Review recent readings for the selected patient</p>
+                        </div>
+                        <div>
+                            <h2 id="graphTitle">Biomarker Trends</h2>
                             <p>Review recent readings for the selected patient</p>
                         </div>
                         <div id="graphRange">
-                            <button class="graphRangeBtn graphRangeBtn--active">Day</button>
-                            <button class="graphRangeBtn">Week</button>
-                            <button class="graphRangeBtn">Month</button>
+                            <button class="graphRangeBtn graphRangeBtn--active" data-range="7d">Day</button>
+                            <button class="graphRangeBtn" data-range="4w">Week</button>
+                            <button class="graphRangeBtn" data-range="3m">Month</button>
                         </div>
                     </div>
 
-                    <div class="chart-placeholder">
-                        <p>Chart area</p>
+                    <div id="graph">
+                        <canvas id="clinicianBiomarkerGraph"></canvas>
                     </div>
                 </section>
                 <section class="panel notes-panel">
@@ -72,8 +75,8 @@
                     <textarea class="notes-box" placeholder="Add observations or notes about this patient..."></textarea>
                     <button class="primary-btn">Save Notes</button>
                 </section>
-            </section>
         </main>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="js/dashboard.js"></script>
     </body>
 </html>
