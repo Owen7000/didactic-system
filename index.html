@@ -1,8 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MonoHealth Clinician Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
-    hello world 
+    <div id="mainBg"></div>
+    <main class="web-shell auth-shell">
+      <section class="auth-hero">
+        <h1 class="hero-title">MonoHealth</h1>
+        <p class="hero-subtitle">Clinician Portal</p>
+        <p class="hero-copy">
+          Securely access your assigned paitients and review their biomarker data in one place.
+        </p>
+      </section>
+
+      <section class="auth-panel">
+        <h2>Sign in</h2>
+        <div id="loginCard">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="clinician@example.com">
+
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="••••••••">
+          <button id="loginBtn">Log in</button>
+        </div>
+        <p id="loginMessage" class="status-text"></p>
+      </section>
+    </main>
+    <script src="js/login.js"></script>
+
+
   </body>
 </html>
