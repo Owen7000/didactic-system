@@ -57,7 +57,6 @@ const getGraphData = async (req, res) => {
         start_date.setDate(start_date.getDate() - daysToGrab);
         start_date.setHours(0,0,0,0);
 
-        console.log(start_date);
 
         var values;
 
@@ -135,7 +134,6 @@ const getGraphData = async (req, res) => {
             })
         }
 
-        console.log(err);
         
         return res.status(401).json({
             error: "Invalid token",

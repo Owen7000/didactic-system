@@ -12,8 +12,7 @@ const getClinicianPatientGraph = async (req, res) => {
 
     try {
         const decoded = jwt.verify(userApiKey, process.env.JWT_SECRET);
-        console.log("graph req body =", req.body);
-        console.log("decoded token =", decoded);
+
         if (decoded.role !== "clinician") {
             return res.status(401).json({
                 error: "Invalid account type",
@@ -26,7 +25,6 @@ const getClinicianPatientGraph = async (req, res) => {
                 patientId: Number(patientId)
             }
         });
-        console.log("link =", link);
         if (!link) {
             return res.status(401).json({
                 error: "Unauthorised",
@@ -154,18 +152,12 @@ const getClinicianPatientGraph = async (req, res) => {
                 break;
             }
         }
-        // debugging
-        console.log("patientId =", patientId);
-        console.log("type =", type);
-        console.log("dateFrame =", dateFrame);
-        console.log("data =", data);
 
         return res.status(200).json({
             data
         });
 
     } catch (err) {
-        console.log("graph controller error =", err);
         return res.status(500).json({
             error: "Server error",
             message: err.message,

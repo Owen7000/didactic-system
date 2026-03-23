@@ -88,7 +88,6 @@ const createAppointment = async (req, res) => {
                 pushSent = true;
             } catch (err){
                 pushError = err.message;
-                console.log("FCM send error =", err);
 
                 if (
                     err.code === "messaging/registration-token-not-registered" ||
@@ -108,7 +107,6 @@ const createAppointment = async (req, res) => {
             pushError
         });
     } catch (err){
-        console.log("createAppointment error =", err);
         return res.status(500).json({
             error: "Servor error"
         })
