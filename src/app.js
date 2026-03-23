@@ -11,6 +11,11 @@ const getThresholdsRoutes = require("./routes/getThresholds.routes");
 const dashboardGraphRoutes = require("./routes/dashboardGraph.routes");
 const setThresholdsRoutes = require("./routes/setThresholds.routes");
 const getNotificationsRoutes = require("./routes/getNotifications.routes");
+const getClinicianPatientsRoutes = require("./routes/getClinicianPatients.routes");
+const clinicianAuthRoutes = require("./routes/clinicianAuth.routes");
+const getClinicianPatientDashboardRoutes = require("./routes/getClinicianPatientDashboard.routes");
+const getClinicianPatientGraphRoutes = require("./routes/getClinicianPatientGraph.routes");
+const createAppointmentRoutes = require("./routes/createAppointment.routes");
 
 const app = express();
 app.use(express.json());
@@ -34,6 +39,11 @@ app.use("/api/", getThresholdsRoutes);
 app.use("/api/", dashboardGraphRoutes);
 app.use("/api/", setThresholdsRoutes);
 app.use("/api/", getNotificationsRoutes);
+app.use("/api/", getClinicianPatientsRoutes);
+app.use("/api/", clinicianAuthRoutes);
+app.use("/api", getClinicianPatientDashboardRoutes);
+app.use("/api/", getClinicianPatientGraphRoutes);
+app.use("/api/", createAppointmentRoutes);
 
 // Do not move this, keep it at the bottom of the middleware stack, otherwise it won't pick up the 404 errors properly
 app.use((req, res, next) => {

@@ -18,76 +18,81 @@
         <main class="web-shell dashboard-shell">
             <aside class="panel patient-panel">
                 <h2 class="panel-title">Assigned Patients</h2>
-                <div id="patientList" class="patient-list">
-                    <button class="patient-card active" data-name="example1" data-email="example1@email.com">
-                        <div class="patient-card-name">example1</div>
-                        <div class="patient-card-sub">Heart rate, steps, blood pressure</div>
-                    </button>
-                </div>
-                <div id="patientList" class="patient-list">
-                    <button class="patient-card active" data-name="example2" data-email="example2@email.com">
-                        <div class="patient-card-name">example2</div>
-                        <div class="patient-card-sub">Calories, activity, alerts</div>
-                    </button>
-                </div>
-                <div id="patientList" class="patient-list">
-                    <button class="patient-card active" data-name="example3" data-email="example3@email.com">
-                        <div class="patient-card-name">example3</div>
-                        <div class="patient-card-sub">Abnormal reading</div>
-                    </button>
-                </div>        
+                <div id="patientList" class="patient-list"></div>        
 
             </aside>
             <section class="panel content-panel">
                 <div class="patient-header">
                     <div>
-                        <h1 id="selectedPatientName">Example</h1>
-                        <p id="selectedPatientEmail">Example@email.com</p>
+                        <h1 id="selectedPatientEmail">Example</h1>
                     </div>
                 </div>
                 <section id="biomarkerOverview" class="web-biomarker-overview">
                     <h2 id="bioTitle">Latest Biomarkers</h2>
-                    <div id="bioCard bioCard--active">
-                        <div class="bioLabel">Heart Rate</div>
-                        <div id="patientHeartRate" class="bioValue bioValue--active">75 bpm</div>
-                    </div>
-                    <div id="bioCard bioCard">
-                        <div class="bioLabel">Steps</div>
-                        <div id="patientSteps class="bioValue">7,542</div>
-                    </div>
-                    <div id="bioCard bioCard">
-                        <div class="bioLabel">Blood Pressure</div>
-                        <div id="patientBp" class="bioValue">120/80</div>
-                    </div>
-                    <div id="bioCard bioCard">
-                        <div class="bioLabel">Calories</div>
-                        <div id="patientCalories" class="bioValue">1,840</div>
+
+                    <div id="bioCards">
+                        <div class="bioCard bioCard--active">
+                            <div class="bioLabel">Heart Rate</div>
+                            <div id="patientHeartRate" class="bioValue bioValue--active">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Steps</div>
+                            <div id="patientSteps" class="bioValue">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Blood Pressure</div>
+                            <div id="patientBp" class="bioValue">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Calories</div>
+                            <div id="patientCalories" class="bioValue">-</div>
+                        </div>
                     </div>
                 </section>
                 <section id="graphSection">
                     <div id="graphTop">
                         <div>
                             <h2 id="graphTitle">Biomarker Trends</h2>
+                            <p id="graphSubtitle">Review recent readings for the selected patient</p>
+                        </div>
+                        <div>
+                            <h2 id="graphTitle">Biomarker Trends</h2>
                             <p>Review recent readings for the selected patient</p>
                         </div>
                         <div id="graphRange">
-                            <button class="graphRangeBtn graphRangeBtn--active">Day</button>
-                            <button class="graphRangeBtn">Week</button>
-                            <button class="graphRangeBtn">Month</button>
+                            <button class="graphRangeBtn graphRangeBtn--active" data-range="7d">Day</button>
+                            <button class="graphRangeBtn" data-range="4w">Week</button>
+                            <button class="graphRangeBtn" data-range="3m">Month</button>
                         </div>
                     </div>
 
-                    <div class="chart-placeholder">
-                        <p>Chart area</p>
+                    <div id="graph">
+                        <canvas id="clinicianBiomarkerGraph"></canvas>
                     </div>
                 </section>
-                <section class="panel notes-panel">
-                    <h2 class="panel-title">Clinical Notes</h2>
-                    <textarea class="notes-box" placeholder="Add observations or notes about this patient..."></textarea>
-                    <button class="primary-btn">Save Notes</button>
+                
+                <section class="panel appointment-panel">
+                    <h2 class="panel-title">Schedule Appointment</h2>
+                    <label for="appointmentPurpose">Purpose</label>
+                    <input id="appointmentPurpose" type="text" placeholder="e.g. Blood pressure review">
+
+                    <label for="appointmentLocation">Location</label>
+                    <input id="appointmentLocation" type="text" placeholder="e.g. Clinic Room 2">
+
+                    <label for="appointmentDatetime">Date and time</label>
+                    <input id="appointmentDatetime" type="datetime-local">
+
+                    <label for="appointmentRequirements">Requirements</label>
+                    <textarea id="appointmentRequirements" class="notes-box" placeholder="e.g. Bring medication list"></textarea>
+                    
+                    <label for="appointmentNotes">Notes</label>
+                    <textarea id="appointmentNotes" class="notes-box" placeholder="Extra notes..."></textarea>
+
+                    <button id="createAppointmentBtn" class="primary-btn">Create Appointment</button>
+                    <p id="appointmentMessage"></p>
                 </section>
-            </section>
         </main>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="js/dashboard.js"></script>
     </body>
 </html>
