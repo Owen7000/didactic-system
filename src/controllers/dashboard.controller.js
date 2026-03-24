@@ -27,12 +27,29 @@ const sendBasicDashboardData = async (req, res) => {
         }
     });
 
+    // Need to also get the heart rate data
+    const heartRateRecordLatest = await prisma.userHeartRate.findFirst({
+        where: {
+            dailyRecordId: currentUserDailyRecord.dailyRecordId
+        },
+
+        orderBy: [
+            {
+                hour: 'desc'
+            }, 
+            {
+                minute: 'desc'
+            }
+        ]
+    })
+
     if (currentUserDailyRecord != null) {
         return res.status(200).json({
             steps: currentUserDailyRecord.steps,
             calories: currentUserDailyRecord.calories,
             systolic: currentUserDailyRecord.systolic,
-            diastolic: currentUserDailyRecord.diastolic
+            diastolic: currentUserDailyRecord.diastolic,
+            heartRate: heartRateRecordLatest.reading
         });
     } else {
         // create a new daily record for today, and return all the values
