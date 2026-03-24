@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>MonoHealth Clinician Dashboard</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <header id="dashbar" class="web-topbar">
+            <div id="dashProfile">CL</div>
+            <div id="dashTitle">Clinician Dashboard</div>
+            <button id="logoutBtn" class="topbar-btn">Log out</button>
+        
+        </header>
+
+        <main class="web-shell dashboard-shell">
+            <aside class="panel patient-panel">
+                <h2 class="panel-title">Assigned Patients</h2>
+                <div id="patientList" class="patient-list"></div>        
+
+            </aside>
+            <section class="panel content-panel">
+                <div class="patient-header">
+                    <div>
+                        <h1 id="selectedPatientEmail">Example</h1>
+                    </div>
+                </div>
+                <section id="biomarkerOverview" class="web-biomarker-overview">
+                    <h2 id="bioTitle">Latest Biomarkers</h2>
+
+                    <div id="bioCards">
+                        <div class="bioCard bioCard--active">
+                            <div class="bioLabel">Heart Rate</div>
+                            <div id="patientHeartRate" class="bioValue bioValue--active">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Steps</div>
+                            <div id="patientSteps" class="bioValue">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Blood Pressure</div>
+                            <div id="patientBp" class="bioValue">-</div>
+                        </div>
+                        <div class="bioCard">
+                            <div class="bioLabel">Calories</div>
+                            <div id="patientCalories" class="bioValue">-</div>
+                        </div>
+                    </div>
+                </section>
+                <section id="graphSection">
+                    <div id="graphTop">
+                        <div>
+                            <h2 id="graphTitle">Biomarker Trends</h2>
+                            <p id="graphSubtitle">Review recent readings for the selected patient</p>
+                        </div>
+                        <div>
+                            <h2 id="graphTitle">Biomarker Trends</h2>
+                            <p>Review recent readings for the selected patient</p>
+                        </div>
+                        <div id="graphRange">
+                            <button class="graphRangeBtn graphRangeBtn--active" data-range="7d">Day</button>
+                            <button class="graphRangeBtn" data-range="4w">Week</button>
+                            <button class="graphRangeBtn" data-range="3m">Month</button>
+                        </div>
+                    </div>
+
+                    <div id="graph">
+                        <canvas id="clinicianBiomarkerGraph"></canvas>
+                    </div>
+                </section>
+                
+                <section class="panel appointment-panel">
+                    <h2 class="panel-title">Schedule Appointment</h2>
+                    <label for="appointmentPurpose">Purpose</label>
+                    <input id="appointmentPurpose" type="text" placeholder="e.g. Blood pressure review">
+
+                    <label for="appointmentLocation">Location</label>
+                    <input id="appointmentLocation" type="text" placeholder="e.g. Clinic Room 2">
+
+                    <label for="appointmentDatetime">Date and time</label>
+                    <input id="appointmentDatetime" type="datetime-local">
+
+                    <label for="appointmentRequirements">Requirements</label>
+                    <textarea id="appointmentRequirements" class="notes-box" placeholder="e.g. Bring medication list"></textarea>
+                    
+                    <label for="appointmentNotes">Notes</label>
+                    <textarea id="appointmentNotes" class="notes-box" placeholder="Extra notes..."></textarea>
+
+                    <button id="createAppointmentBtn" class="primary-btn">Create Appointment</button>
+                    <p id="appointmentMessage"></p>
+                </section>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="js/dashboard.js"></script>
+    </body>
+</html>

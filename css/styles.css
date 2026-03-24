@@ -1,0 +1,385 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: rgb(31, 31, 31);
+  font-family: Arial, sans-serif;
+  color: rgb(232, 232, 232);
+}
+
+body {
+  position: relative;
+}
+
+h1, h2 {
+  color: rgb(232, 232, 232);
+  margin-top: 0;
+}
+
+p {
+  color: rgba(232, 232, 232, 0.75);
+}
+
+#mainBg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(45deg, rgba(31,31,31,1), rgba(43,121,255,1), rgba(31,31,31,1));
+  background-size: 200% 200%;
+  animation: mainGradient 8s ease infinite;
+  opacity: 0.35;
+  z-index: 0;
+}
+
+@keyframes mainGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.web-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.auth-hero {
+  padding: 40px 12px;
+}
+
+.hero-title {
+  font-size: 56px;
+  font-weight: 800;
+  font-family: "Inter", system-ui, sans-serif;
+  margin-bottom: 12px;
+}
+
+.hero-subtitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: rgb(43, 121, 255);
+  margin-bottom: 18px;
+}
+
+.hero-copy {
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+.auth-panel {
+  background: rgb(42, 42, 42);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  padding: 24px;
+  border-radius: 16px;
+}
+
+#loginCard label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.75);
+}
+
+#loginCard input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background-color: rgb(48, 48, 48);
+  color: rgb(232, 232, 232);
+  outline: none;
+}
+
+#loginBtn,
+.primary-btn,
+.topbar-btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  background-color: rgb(43, 121, 255);
+  color: rgb(232, 232, 232);
+  cursor: pointer;
+}
+
+#loginBtn {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.status-text {
+  min-height: 20px;
+  margin-top: 12px;
+}
+
+.web-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 84px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.92);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+#dashTitle {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+}
+
+#dashProfile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgb(43,121,255), rgb(90,160,255));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+}
+
+.dashboard-shell {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  padding: 24px 0 40px;
+}
+
+.panel {
+  background: rgba(26, 26, 26, 0.92);
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+.panel-title {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.patient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-card {
+  width: 100%;
+  text-align: left;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+.patient-card.active {
+  background: linear-gradient(135deg, rgba(43,121,255,0.95), rgba(28,83,177,0.95));
+}
+
+.patient-card-name {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.patient-card-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+}
+
+.content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.patient-header h1 {
+  margin-bottom: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.web-biomarker-overview {
+  padding-top: 0;
+}
+
+#bioCards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.bioCard {
+  background: rgba(26, 26, 26, 0.92);
+  border-radius: 14px;
+  padding: 14px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.bioCard--active {
+  background: linear-gradient(135deg, rgba(43,121,255,0.95), rgba(28, 83, 177, 0.95));
+}
+
+.bioLabel {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+}
+
+.bioValue {
+  font-family: "Inter", system-ui, sans-serif;
+  margin-top: 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: rgba(43,121,255,0.95);
+}
+
+.bioValue--active {
+  color: white;
+}
+
+#graphSection {
+  margin: 0;
+  background: rgba(26, 26, 26, 0.92);
+  border-radius: 16px;
+  padding: 16px 14px 14px 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+#graphTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+#graphTitle {
+  margin: 0 0 8px 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+#graphRange {
+  display: flex;
+  gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.graphRangeBtn {
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.70);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.graphRangeBtn--active {
+  background: rgb(43, 121, 255);
+  color: white;
+}
+
+.chart-placeholder {
+  height: 260px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.55);
+}
+
+.notes-box {
+  width: 100%;
+  min-height: 130px;
+  resize: vertical;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgb(48, 48, 48);
+  color: rgb(232,232,232);
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .auth-shell,
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .web-topbar {
+    padding: 0 16px;
+  }
+
+  .web-shell {
+    width: calc(100% - 20px);
+  }
+}
+.appointment-panel label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: rgba(232, 232, 232, 0.75);
+}
+
+.appointment-panel input,
+.appointment-panel textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background-color: rgb(48, 48, 48);
+  color: rgb(232, 232, 232);
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+#appointmentMessage {
+  margin-top: 12px;
+  color: rgba(255,255,255,0.8);
+}

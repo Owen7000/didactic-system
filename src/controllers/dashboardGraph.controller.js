@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../utils/prisma");
 
 const getGraphData = async (req, res) => {
-
+    console.log("graph req.body =", req.body);
     const { userApiKey, type, dateFrame} = req.body;
 
-    if (!userApiKey || type == undefined || !dateFrame && false != 0) {
+    if (!userApiKey || type == undefined || !dateFrame ) {
         return res.status(400).json ({
             message: "An api key, type, and dateFrame are required",
         });
@@ -25,121 +25,99 @@ const getGraphData = async (req, res) => {
                 message: `DateFrame must be in the format 'integer...string'. Received: ${dateFrame}`
             });
         };
+        const daysToGrab = convertDateFrameToDays(dateFrame);
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - daysToGrab);
+        startDate.setHours(0,0,0,0);
 
-        // Try to get the user which matches with the userId in the jwt
-        const user = await prisma.user.findFirst({
-            where: {
-                userId: decoded.userId
-            }
-        });
-
-        if (!user) {
-            return res.status(401).json({
-                message: "Invalid token"
-            })
-        };
-
-        const outputData = [];
-
-        const dateFrameIdentifer = dateFrame.at(-1);
-        const dateFrameTimespan = dateFrame.slice(0, -1);
-        var daysToGrab = 0;
-
-        // Turn the string into a number of days
-        switch (dateFrameIdentifer) {
-            case "d":daysToGrab = dateFrameTimespan;break;
-            case "w":daysToGrab = dateFrameTimespan * 7;break;
-            case "m":daysToGrab = dateFrameTimespan * 30;break; // On average there are 30.44 days in a month, so this will work
-            case "y":daysToGrab = dateFrameTimespan * 365;break; // Leap years don't need to be accounted in this case, as this is only a prototype, but in a full system we should probaby adapt this
+        const numericType = Number(type);
+        if(numericType === 0){
+            const records = await prisma.dailyRecord.findMany({
+               where: {
+                userId: decoded.userId,
+                date: {
+                    gte: startDate
+                }
+               },
+               include: {
+                userHeartRates: true
+               },
+               orderBy: {
+                date: "asc"
+               }
+            });
+            const labels = [];
+            const values = [];
+            records.forEach((record) => {
+                const sorted = [...record.userHeartRates].sort((a,b) => {
+                    if (a.hour !== b.hour) return a.hour - b.hour;
+                    return a.minute - b.minute;
+                });
+                sorted.forEach((row) => {
+                    labels.push(`${pad(row.hour)}:${pad(row.minute)}`);
+                    values.push(row.reading);
+                });
+            });
+            return res.status(200).json({ labels, values });
         }
-
-        const start_date = new Date();
-        start_date.setDate(start_date.getDate() - daysToGrab);
-        start_date.setHours(0,0,0,0);
-
-        console.log(start_date);
-
-        var values;
-
-        switch (type) {
-            case 0:
-                values = await prisma.dailyRecord.findMany({
-                    where: {
-                        date: {
-                            gte: start_date
-                        },
-                    },
-                    select: {
-                        calories: true
+        if (numericType === 1) {
+            const records = await prisma.dailyRecord.findMany({
+                where: {
+                    userId: decoded.userId,
+                    date: {
+                        gte: startDate
                     }
-                });
-                break;
-
-            case 1:
-                values = await prisma.dailyRecord.findMany({
-                    where: {
-                        date: {
-                            gte: start_date
-                        },
-                    },
-                    select: {
-                        steps: true
-                    }
-                });
-                break;
-
-            case 2:
-                values = await prisma.dailyRecord.findMany({
-                    where: {
-                        date: {
-                            gte: start_date
-                        },
-                    },
-                    select: {
-                        diastolic: true,
-                        systolic: true
-                    }
-                });
-                break;
-
-            case 3:
-                values = await prisma.dailyRecord.findMany({
-                    where: {
-                        date: {
-                            gte: start_date
-                        },
-                    },
-                    select: {
-                        calories: true
-                    }
-                });
-                break;
+                },
+                orderBy: {
+                    date: "asc"
+                }
+            });
+            return res.status(200).json({
+                labels: records.map((r) => formatDate(r.date)),
+                values: records.map((r) => r.steps)
+            });
         }
-
-        // The variable  values should now always contain key value pairs.
-        // Loop through each and take only the value, appending it to output data
-        values.forEach((object) => {
-            for (const [key, value] of Object.entries(object))  {
-                outputData.push(value);
-            };
-        });
-
-        return res.status(200).json({
-            message: "PLACEHOLDER",
-            data: outputData
-        });
-    } catch (err) {
-        if (err.name == "TokenExpiredError") {
-            return res.status(401).json({
-                error: "Token expired"
-            })
+        if (numericType === 2) {
+            const records = await prisma.dailyRecord.findMany({
+                where: {
+                    userId: decoded.userId,
+                    date: {
+                        gte: startDate
+                    }
+                },
+                orderBy: {
+                    date: "asc"
+                }
+            });
+            return res.status(200).json({
+                labels: records.map((r) => formatDate(r.date)),
+                systolic: records.map((r) => r.systolic),
+                diastolic: records.map((r) => r.diastolic)
+            });
         }
-
-        console.log(err);
-        
+        if (numericType === 3) {
+            const records = await prisma.dailyRecord.findMany({
+                where: {
+                    userId: decoded.userId,
+                    date: {
+                        gte: startDate
+                    }
+                },
+                orderBy: {
+                    date: "asc"
+                }
+            });
+            return res.status(200).json({
+                labels: records.map((r) => formatDate(r.date)),
+                values: records.map((r) => r.calories)
+            });
+        }
+        return res.status(400).json({
+            message: "Invalid graph type"
+        });
+    } catch(err) {
         return res.status(401).json({
-            error: "Invalid token",
-            message: err.name
+            error: "Invalid token"
         });
     }
 }
@@ -151,7 +129,7 @@ const getGraphData = async (req, res) => {
  * @returns true if the biometric type identifier is valid, false otherwise
  */
 function isBiometricTypeValid(type) {
-    return type <= 3 && type >= 0 ? true : false;
+    return Number(type) <= 3 && Number(type) >= 0;
 }
 
 /**
@@ -162,17 +140,29 @@ function isBiometricTypeValid(type) {
  * @returns true if the date frame is in a valid format, false otherwise
  */
 function isDateFrameValid(dateFrame) {
-    const dateIdentifierIsValid = ["d", "w", "m", "y"].includes(dateFrame.at(-1));
+    const unit = dateFrame.at(-1);
+    const numberPart = dateFrame.slice(0,-1);
+    return ["d", "w", "m", "y"].includes(unit) && !isNaN(numberPart);
+}
+function convertDateFrameToDays(dateFrame) {
+    const unit = dateFrame.at(-1);
+    const numberPart = Number(dateFrame.slice(0, -1));
 
-    // Check that the string minus the character at position -1 is only numbers
-    const dateQuantifierIsNaN = isNaN(dateFrame.slice(0, -1).toString());
-
-
-    if (dateIdentifierIsValid && !dateQuantifierIsNaN) {
-        return true;
+    switch (unit) {
+        case "d": return numberPart;
+        case "w": return numberPart * 7;
+        case "m": return numberPart * 30;
+        case "y": return numberPart * 365;
+        default: return 0;
     }
+}
+function pad(value) {
+    return String(value).padStart(2, "0");
+}
 
-    return false;
+function formatDate(date) {
+    const d = new Date(date);
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
 }
 
 module.exports = {
